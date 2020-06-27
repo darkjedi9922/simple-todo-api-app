@@ -26,4 +26,9 @@ class User extends Authenticatable
     {
         return Hash::check($password, $hashedPassword);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_id');
+    }
 }
