@@ -19,7 +19,7 @@ class CreateTasksTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->enum('status', Task::STATUS_ENUM)->default(Task::STATUS_DEFAULT);
-            $table->foreignId('user_id')->references('user_id')->on('users');
+            $table->foreignId('user_id')->references('user_id')->on('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }

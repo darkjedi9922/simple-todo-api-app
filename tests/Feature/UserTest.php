@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 use App\User;
+use App\Task;
 
 class UserTest extends TestCase
 {
@@ -158,6 +159,17 @@ class UserTest extends TestCase
         $this->delete('/api/profile', [], $this->getAuthorizationHeaders($user))->assertOk();
         
         $this->assertNull(User::query()->find($user->getKey()));
+    }
+
+    public function testDeletesUserWithCascadeDeletionOfAllItsTasks()
+    {
+        $user = $this->createUserWithPassword('123');
+        factory(Task::class, 2)->create(['user_id' => $user->getKey()]);
+
+        $this->delete('/api/profile', [], $this->getAuthorizationHeaders($user))->assertOk();
+
+        $this->assertNull(User::query()->find($user->getKey()));
+        $this->assertEmpty(Task::query()->where('user_id', '=', $user->getKey())->get());
     }
 
     private function createUserWithPassword(string $password): User
