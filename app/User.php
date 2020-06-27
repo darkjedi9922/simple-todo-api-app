@@ -2,38 +2,28 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    protected $primaryKey = 'user_id';
+    protected $fillable = ['first_name', 'last_name', 'email', 'password', 'api_token'];
+    protected $hidden = ['password', 'api_token'];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+    public static function generateApiToken(): string
+    {
+        return Str::random(80);
+    }
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    public static function hashPassword(string $password): string
+    {
+        return Hash::make($password);
+    }
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public static function checkPassword(string $password, string $hashedPassword): bool
+    {
+        return Hash::check($password, $hashedPassword);
+    }
 }
