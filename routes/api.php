@@ -23,6 +23,15 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/profile', 'UserController@deleteSelf');
 });
 
+Route::get('/tasks', 'TaskController@list');
+Route::middleware('auth:api')->group(function () {
+    Route::post('/tasks', 'TaskController@create');
+    Route::post('/tasks/edit/{task}', 'TaskController@edit');
+    Route::post('/tasks/{task}/status', 'TaskController@setStatus');
+    Route::post('/tasks/{task}/user', 'TaskController@setUser');
+    Route::delete('/tasks/{task}', 'TaskController@delete');
+});
+
 Route::fallback(function () {
     return response(['message' => 'Not Found'], 404);
 });
